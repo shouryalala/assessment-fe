@@ -1,36 +1,74 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Frontend Performance Assessment
 
-## Getting Started
+Welcome to this frontend development assessment! You'll be working with a Next.js application that displays Spotify music data in a table format.
 
-First, run the development server:
+## Setup Instructions
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+1. **Install dependencies:**
+   ```bash
+   npm install
+   ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. **Start the development server:**
+   ```bash
+   npm run dev
+   ```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. **View the application:**
+   Open [http://localhost:3000](http://localhost:3000) in your browser
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Initial Exploration
 
-## Learn More
+Take some time to explore the codebase and understand how the application works. The current sample data in `public/spotify-sample.json` contains a small dataset for initial testing.
 
-To learn more about Next.js, take a look at the following resources:
+## Task 1: Load Real Dataset
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+The current sample file is just for testing. Please follow these steps to work with a more realistic dataset:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. **Download the full dataset:**
+   - Download the file from this link: https://drive.google.com/file/d/1uZ4w2lcSLvEcmiX4oXat_L2cM56JQkj6/view?usp=sharing
+   - Save it to the `public/` folder
+   - Update the code to use `spotify-dataset.json` instead of `spotify-sample.json`
 
-## Deploy on Vercel
+2. **Test with the larger dataset:**
+   - Restart your development server
+   - Navigate through the application and observe its behavior
+   - Try expanding different rows to view detailed information
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Task 2: Export Functionality Analysis
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The application includes a "Export to CSV" feature in the header. Your task is to:
+
+1. **Test the export functionality:**
+   - Click the "Export to CSV" button
+   - Observe what happens during the export process
+   - Note any issues with user experience
+
+2. **Analyze and improve:**
+   - Examine the export implementation in the code
+   - Identify performance bottlenecks and inefficiencies
+   - Implement optimizations to improve the export experience
+
+## What We're Looking For
+
+- **Code Analysis**: Ability to identify performance issues in existing code
+- **Problem Solving**: Understanding of JavaScript performance optimization techniques
+- **User Experience**: Consideration for how performance affects user interaction
+- **Clean Code**: Implementation of efficient, maintainable solutions
+
+## Questions to Consider
+
+While working on this assessment, think about:
+- What makes the export process slow or inefficient?
+- How does the application behave with larger datasets?
+- What optimization strategies could improve performance?
+- How can you maintain functionality while improving efficiency?
+
+## Submission
+
+Please document your findings and the changes you made to optimize the application. Include:
+- Description of issues identified
+- Explanation of your optimization approach
+- Any trade-offs or considerations made during implementation
+
+Good luck!
