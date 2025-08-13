@@ -41,6 +41,7 @@ interface Song {
 export default function Home() {
   const [songs, setSongs] = useState<Song[]>([]);
   const [expandedRows, setExpandedRows] = useState<Set<number>>(new Set());
+  const [isExporting, setIsExporting] = useState(false);
 
   useEffect(() => {
     fetch('/spotify-sample.json')
@@ -77,6 +78,146 @@ export default function Home() {
     return contexts.filter(context => song[context.key as keyof Song] === 1);
   };
 
+  const exportData = async () => {
+    setIsExporting(true);
+    
+    await new Promise(resolve => setTimeout(resolve, 100));
+    
+    const extractedData: any[] = [];
+    
+    for (let i = 0; i < songs.length; i++) {
+      const song = songs[i];
+      
+      const songData: any = {};
+      
+      songData['Artist'] = '';
+      songData['Song'] = '';
+      songData['Album'] = '';
+      songData['Genre'] = '';
+      songData['Length'] = '';
+      songData['Emotion'] = '';
+      songData['Popularity'] = '';
+      songData['Release Date'] = '';
+      songData['Key'] = '';
+      songData['Tempo'] = '';
+      songData['Energy'] = '';
+      songData['Danceability'] = '';
+      songData['Positiveness'] = '';
+      songData['Liveness'] = '';
+      songData['Acousticness'] = '';
+      songData['Speechiness'] = '';
+      songData['Loudness'] = '';
+      songData['Time Signature'] = '';
+      songData['Explicit'] = '';
+      songData['Instrumentalness'] = '';
+      songData['Lyrics'] = '';
+      songData['Good for Party'] = '';
+      songData['Good for Work/Study'] = '';
+      songData['Good for Relaxation/Meditation'] = '';
+      songData['Good for Exercise'] = '';
+      songData['Good for Running'] = '';
+      songData['Good for Yoga/Stretching'] = '';
+      songData['Good for Driving'] = '';
+      songData['Good for Social Gatherings'] = '';
+      songData['Good for Morning Routine'] = '';
+      songData['Similar Songs'] = '';
+      
+      for (let j = 0; j < 50; j++) {
+        songData['Artist'] = song['Artist(s)'];
+        songData['Song'] = song.song;
+        songData['Album'] = song.Album;
+        songData['Genre'] = song.Genre;
+        songData['Length'] = song.Length;
+        songData['Emotion'] = song.emotion;
+        songData['Popularity'] = song.Popularity;
+        songData['Release Date'] = song['Release Date'] || 'N/A';
+        songData['Key'] = song.Key;
+        songData['Tempo'] = song.Tempo.toString();
+        songData['Energy'] = song.Energy + '%';
+        songData['Danceability'] = song.Danceability + '%';
+        songData['Positiveness'] = song.Positiveness + '%';
+        songData['Liveness'] = song.Liveness + '%';
+        songData['Acousticness'] = song.Acousticness + '%';
+        songData['Speechiness'] = song.Speechiness + '%';
+        songData['Loudness'] = song['Loudness (db)'].toString() + ' dB';
+        songData['Time Signature'] = song['Time signature'];
+        songData['Explicit'] = song.Explicit;
+        songData['Instrumentalness'] = song.Instrumentalness + '%';
+        songData['Lyrics'] = song.text.substring(0, 100) + '...';
+        songData['Good for Party'] = song['Good for Party'].toString();
+        songData['Good for Work/Study'] = song['Good for Work/Study'].toString();
+        songData['Good for Relaxation/Meditation'] = song['Good for Relaxation/Meditation'].toString();
+        songData['Good for Exercise'] = song['Good for Exercise'].toString();
+        songData['Good for Running'] = song['Good for Running'].toString();
+        songData['Good for Yoga/Stretching'] = song['Good for Yoga/Stretching'].toString();
+        songData['Good for Driving'] = song['Good for Driving'].toString();
+        songData['Good for Social Gatherings'] = song['Good for Social Gatherings'].toString();
+        songData['Good for Morning Routine'] = song['Good for Morning Routine'].toString();
+        
+        let similarSongsStr = '';
+        for (let k = 0; k < song['Similar Songs'].length; k++) {
+          const similar = song['Similar Songs'][k];
+          const values = Object.values(similar);
+          similarSongsStr += values[0] + ' - ' + values[1] + ' (' + (Number(values[2]) * 100).toFixed(1) + '%)';
+          if (k < song['Similar Songs'].length - 1) similarSongsStr += '; ';
+        }
+        songData['Similar Songs'] = similarSongsStr;
+      }
+      
+      extractedData.push(songData);
+      
+      if (i % 5 === 0) {
+        await new Promise(resolve => setTimeout(resolve, 50));
+      }
+    }
+    
+    const jsonString = JSON.stringify(extractedData, null, 2);
+    
+    let csvContent = '';
+    const headers = Object.keys(extractedData[0] || {});
+    
+    csvContent += headers.join(',') + '\n';
+    
+    for (let i = 0; i < extractedData.length; i++) {
+      const row = extractedData[i];
+      const values: string[] = [];
+      
+      for (let j = 0; j < headers.length; j++) {
+        const header = headers[j];
+        let value = row[header] || '';
+        
+        for (let k = 0; k < 10; k++) {
+          value = value.toString().replace(/"/g, '""');
+        }
+        
+        if (value.includes(',') || value.includes('\n') || value.includes('"')) {
+          value = '"' + value + '"';
+        }
+        values.push(value);
+      }
+      
+      csvContent += values.join(',') + '\n';
+      
+      if (i % 3 === 0) {
+        await new Promise(resolve => setTimeout(resolve, 25));
+      }
+    }
+    
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    if (link.download !== undefined) {
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', 'spotify-data-export.csv');
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+    
+    setIsExporting(false);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50">
       {/* Header */}
@@ -105,6 +246,13 @@ export default function Home() {
                 <span className="w-2 h-2 bg-pink-400 rounded-full"></span>
                 Usage Recommendations
               </span>
+              <button
+                onClick={exportData}
+                disabled={isExporting || songs.length === 0}
+                className="bg-white text-purple-600 px-4 py-2 rounded-lg font-medium hover:bg-purple-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                {isExporting ? 'Exporting...' : '📥 Export to CSV'}
+              </button>
             </div>
           </div>
         </div>
